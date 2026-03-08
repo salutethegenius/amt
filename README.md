@@ -24,7 +24,7 @@ cp .env.example .env
 docker-compose up --build
 ```
 
-- Frontend: http://localhost:3000  
+- Frontend: http://localhost:3000 (or next available port)  
 - API: http://localhost:8000  
 - Health: http://localhost:8000/health  
 
@@ -57,9 +57,14 @@ uvicorn app.main:app --reload --port 8000
 | `NEXT_PUBLIC_SUPABASE_URL` | web | Yes (for auth) | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | web | Yes (for auth) | Supabase anon/publishable key |
 | `NEXT_PUBLIC_API_URL` | web | No | Defaults to `http://localhost:8000` |
-| `FRONTEND_ORIGIN` | api | No | CORS; default `http://localhost:3000` |
+| `CORS_ORIGINS` | api | No | Comma-separated origins. Defaults to `http://localhost:3000,http://localhost:3001` |
 | `OPENAI_API_KEY` / `LLM_API_KEY` | api | Optional | For AI features |
 | `QDRANT_URL` / `QDRANT_API_KEY` | api | Optional | For vector search (see docker-compose commented section) |
+
+## Notes
+
+- Protected routes use Next.js `proxy.ts` (`apps/web/src/proxy.ts`) to refresh Supabase auth and guard `/dashboard`.
+- `src/lib/api.ts` includes Zod-validated API response examples with explicit HTTP error handling.
 
 ## Deploy
 
