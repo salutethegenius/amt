@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#0A1628"/>
+  <rect x="32" y="40" width="96" height="16" rx="6" fill="#FFFFFF"/>
+  <rect x="32" y="80" width="76" height="16" rx="6" fill="#0066FF"/>
+  <rect x="32" y="120" width="52" height="16" rx="6" fill="#FFFFFF" opacity="0.5"/>
+  <text x="140" y="104" text-anchor="middle" font-family="system-ui,-apple-system,'Plus Jakarta Sans',sans-serif" font-size="28" font-weight="800" fill="#FFFFFF">KD</text>
+</svg>
+

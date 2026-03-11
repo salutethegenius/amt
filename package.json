@@ -1,0 +1,19 @@
+{
+  "name": "kemisdigital-saas",
+  "version": "1.0.0",
+  "description": "Clone this template to start new projects with zero setup. See [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) for philosophy and stack defaults.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.1",
+    "tailwindcss": "^4.2.1"
+  }
+}

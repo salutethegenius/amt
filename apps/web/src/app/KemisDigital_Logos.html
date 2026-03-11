@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KemisDigital — Logo Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0A1628;
+    --mid:    #0F2040;
+    --accent: #0066FF;
+    --alt:    #0A4FCC;
+    --border: #DDE3F0;
+    --muted:  #F4F7FC;
+    --text:   #1A2340;
+    --sub:    #6B7A99;
+    --font:   'Plus Jakarta Sans', sans-serif;
+    --mono:   'DM Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font);
+    background: #ECEEF4;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    max-width: 1100px;
+    margin: 0 auto 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .page-header h1 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sub);
+    font-family: var(--mono);
+  }
+  .page-header p {
+    font-size: 13px;
+    color: var(--sub);
+    font-family: var(--mono);
+  }
+
+  /* ── Concept wrapper ── */
+  .concept {
+    max-width: 1100px;
+    margin: 0 auto 56px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: white;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 32px rgba(10,22,40,0.07);
+  }
+
+  .concept-label {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .concept-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sub);
+    font-family: var(--mono);
+  }
+  .concept-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .concept-tagline {
+    font-size: 13px;
+    color: var(--sub);
+    margin-left: auto;
+    font-style: italic;
+  }
+
+  /* ── Display row ── */
+  .display-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .display-cell {
+    padding: 52px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    min-height: 220px;
+  }
+  .display-cell.light  { background: white; }
+  .display-cell.muted  { background: var(--muted); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .display-cell.dark   { background: var(--navy); }
+
+  .cell-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--sub);
+    font-family: var(--mono);
+    margin-top: 24px;
+  }
+  .cell-label.inv { color: rgba(255,255,255,0.3); }
+
+  /* ── Rationale ── */
+  .rationale {
+    padding: 24px 32px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .rat-item {}
+  .rat-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-family: var(--mono);
+    margin-bottom: 6px;
+  }
+  .rat-body {
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.6;
+  }
+
+  /* ── Icon row ── */
+  .icon-row {
+    padding: 24px 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .icon-row-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    color: var(--sub);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .icon-sizes {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .icon-size-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-size-label {
+    font-size: 10px;
+    color: var(--sub);
+    font-family: var(--mono);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>KemisDigital — Logo Concepts</h1>
+  <p>Phase 3 · Brand Identity · 3 Directions</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 1 — THE PLATFORM STACK
+     Three ascending parallelogram layers = infrastructure beneath
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+  <div class="concept-label">
+    <span class="concept-num">Concept 01</span>
+    <span class="concept-name">The Platform Stack</span>
+    <span class="concept-tagline">"We build the layer underneath."</span>
+  </div>
+
+  <div class="display-row">
+
+    <!-- Light -->
+    <div class="display-cell light">
+      <svg width="220" height="44" viewBox="0 0 220 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Mark: 3 stacked layer bars -->
+        <rect x="0"  y="0"  width="36" height="9"  rx="2.5" fill="#0A1628"/>
+        <rect x="0"  y="14" width="28" height="9"  rx="2.5" fill="#0066FF"/>
+        <rect x="0"  y="28" width="18" height="9"  rx="2.5" fill="#0A1628" opacity="0.35"/>
+        <!-- Wordmark -->
+        <text x="48" y="31" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#0A1628" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label">On Light</span>
+    </div>
+
+    <!-- Muted -->
+    <div class="display-cell muted">
+      <svg width="220" height="44" viewBox="0 0 220 44" fill="none">
+        <rect x="0"  y="0"  width="36" height="9"  rx="2.5" fill="#0A1628"/>
+        <rect x="0"  y="14" width="28" height="9"  rx="2.5" fill="#0066FF"/>
+        <rect x="0"  y="28" width="18" height="9"  rx="2.5" fill="#0A1628" opacity="0.25"/>
+        <text x="48" y="31" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#0A1628" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label">On Muted</span>
+    </div>
+
+    <!-- Dark -->
+    <div class="display-cell dark">
+      <svg width="220" height="44" viewBox="0 0 220 44" fill="none">
+        <rect x="0"  y="0"  width="36" height="9"  rx="2.5" fill="white"/>
+        <rect x="0"  y="14" width="28" height="9"  rx="2.5" fill="#0066FF"/>
+        <rect x="0"  y="28" width="18" height="9"  rx="2.5" fill="white" opacity="0.3"/>
+        <text x="48" y="31" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label inv">On Dark</span>
+    </div>
+  </div>
+
+  <!-- Icon sizes -->
+  <div class="icon-row">
+    <span class="icon-row-label">Mark only</span>
+    <div class="icon-sizes">
+      <!-- 48px -->
+      <div class="icon-size-item">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect x="0" y="4"  width="36" height="10" rx="3" fill="#0A1628"/>
+          <rect x="0" y="20" width="28" height="10" rx="3" fill="#0066FF"/>
+          <rect x="0" y="36" width="18" height="10" rx="3" fill="#0A1628" opacity="0.3"/>
+        </svg>
+        <span class="icon-size-label">48px</span>
+      </div>
+      <!-- 32px -->
+      <div class="icon-size-item">
+        <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+          <rect x="0" y="2"  width="36" height="9" rx="2.5" fill="#0A1628"/>
+          <rect x="0" y="14" width="28" height="9" rx="2.5" fill="#0066FF"/>
+          <rect x="0" y="26" width="18" height="9" rx="2.5" fill="#0A1628" opacity="0.3"/>
+        </svg>
+        <span class="icon-size-label">32px</span>
+      </div>
+      <!-- 20px -->
+      <div class="icon-size-item">
+        <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
+          <rect x="0" y="2"  width="36" height="9" rx="2.5" fill="#0A1628"/>
+          <rect x="0" y="14" width="28" height="9" rx="2.5" fill="#0066FF"/>
+          <rect x="0" y="26" width="18" height="9" rx="2.5" fill="#0A1628" opacity="0.3"/>
+        </svg>
+        <span class="icon-size-label">20px</span>
+      </div>
+      <!-- On dark bg -->
+      <div class="icon-size-item">
+        <div style="background:#0A1628; padding:10px; border-radius:8px;">
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+            <rect x="0" y="2"  width="36" height="9" rx="2.5" fill="white"/>
+            <rect x="0" y="14" width="28" height="9" rx="2.5" fill="#0066FF"/>
+            <rect x="0" y="26" width="18" height="9" rx="2.5" fill="white" opacity="0.3"/>
+          </svg>
+        </div>
+        <span class="icon-size-label">Dark bg</span>
+      </div>
+      <!-- Favicon -->
+      <div class="icon-size-item">
+        <div style="background:#0066FF; padding:3px 5px; border-radius:4px; width:20px; height:20px; display:flex;align-items:center;justify-content:center;">
+          <svg width="12" height="14" viewBox="0 0 36 36" fill="none">
+            <rect x="0" y="2"  width="36" height="9" rx="2.5" fill="white"/>
+            <rect x="0" y="14" width="28" height="9" rx="2.5" fill="white" opacity="0.7"/>
+            <rect x="0" y="26" width="18" height="9" rx="2.5" fill="white" opacity="0.4"/>
+          </svg>
+        </div>
+        <span class="icon-size-label">Favicon</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <div class="rat-item">
+      <div class="rat-title">Concept</div>
+      <div class="rat-body">Three descending bars read as infrastructure layers — the visual shorthand for "we build the layer underneath." The tapering communicates depth, not decoration.</div>
+    </div>
+    <div class="rat-item">
+      <div class="rat-title">Strength</div>
+      <div class="rat-body">Highly scalable. Works at favicon size, on a business card, and on a billboard. The wordmark split (Kemis in navy / Digital in accent) lets each word carry weight independently.</div>
+    </div>
+    <div class="rat-item">
+      <div class="rat-title">Fits when</div>
+      <div class="rat-body">You want something that feels grounded and architectural — authority without aggression. The right choice if KemisDigital is talking to enterprise and government alongside SMEs.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 2 — THE NODE
+     A K constructed from network connection lines + nodes
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+  <div class="concept-label">
+    <span class="concept-num">Concept 02</span>
+    <span class="concept-name">The Node</span>
+    <span class="concept-tagline">"Connecting the ecosystem."</span>
+  </div>
+
+  <div class="display-row">
+
+    <!-- Light -->
+    <div class="display-cell light">
+      <svg width="224" height="48" viewBox="0 0 224 48" fill="none">
+        <!-- K mark built from nodes and lines -->
+        <!-- Vertical bar -->
+        <rect x="0" y="4" width="5" height="40" rx="2.5" fill="#0A1628"/>
+        <!-- Top diagonal: from (5,4) to (20,4) then down to (20,24) -->
+        <line x1="5" y1="8"  x2="20" y2="4"  stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="4" x2="27" y2="4"  stroke="#0066FF" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Node at top-right -->
+        <circle cx="27" cy="4" r="5" fill="#0066FF"/>
+        <!-- Middle connector to center point -->
+        <line x1="5"  y1="24" x2="20" y2="24" stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Bottom diagonal -->
+        <line x1="5"  y1="38" x2="20" y2="24" stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="24" x2="27" y2="44" stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Node at junction -->
+        <circle cx="20" cy="24" r="4" fill="#0066FF"/>
+        <!-- Small node at bottom -->
+        <circle cx="27" cy="44" r="3.5" fill="#0A1628" opacity="0.4"/>
+        <!-- Wordmark -->
+        <text x="44" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#0A1628" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label">On Light</span>
+    </div>
+
+    <!-- Muted -->
+    <div class="display-cell muted">
+      <svg width="224" height="48" viewBox="0 0 224 48" fill="none">
+        <rect x="0" y="4" width="5" height="40" rx="2.5" fill="#0A1628"/>
+        <line x1="5" y1="8"  x2="20" y2="4"  stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="4" x2="27" y2="4"  stroke="#0066FF" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="27" cy="4" r="5" fill="#0066FF"/>
+        <line x1="5"  y1="24" x2="20" y2="24" stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="5"  y1="38" x2="20" y2="24" stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="24" x2="27" y2="44" stroke="#0A1628" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="20" cy="24" r="4" fill="#0066FF"/>
+        <circle cx="27" cy="44" r="3.5" fill="#0A1628" opacity="0.4"/>
+        <text x="44" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#0A1628" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label">On Muted</span>
+    </div>
+
+    <!-- Dark -->
+    <div class="display-cell dark">
+      <svg width="224" height="48" viewBox="0 0 224 48" fill="none">
+        <rect x="0" y="4" width="5" height="40" rx="2.5" fill="white"/>
+        <line x1="5" y1="8"  x2="20" y2="4"  stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="4" x2="27" y2="4"  stroke="#0066FF" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="27" cy="4" r="5" fill="#0066FF"/>
+        <line x1="5"  y1="24" x2="20" y2="24" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="5"  y1="38" x2="20" y2="24" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="24" x2="27" y2="44" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="20" cy="24" r="4" fill="#0066FF"/>
+        <circle cx="27" cy="44" r="3.5" fill="white" opacity="0.35"/>
+        <text x="44" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label inv">On Dark</span>
+    </div>
+  </div>
+
+  <!-- Icon sizes -->
+  <div class="icon-row">
+    <span class="icon-row-label">Mark only</span>
+    <div class="icon-sizes">
+      <div class="icon-size-item">
+        <svg width="48" height="48" viewBox="0 0 32 48" fill="none">
+          <rect x="0" y="0"  width="5"  height="48" rx="2.5" fill="#0A1628"/>
+          <line x1="5" y1="5"   x2="20" y2="0"  stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="20" y1="0"  x2="28" y2="0"  stroke="#0066FF" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="28" cy="0" r="5.5" fill="#0066FF"/>
+          <line x1="5" y1="24"  x2="20" y2="24" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="5" y1="43"  x2="20" y2="24" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="20" y1="24" x2="28" y2="48" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="20" cy="24" r="5" fill="#0066FF"/>
+          <circle cx="28" cy="48" r="4" fill="#0A1628" opacity="0.35"/>
+        </svg>
+        <span class="icon-size-label">48px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg width="32" height="32" viewBox="0 0 32 48" fill="none">
+          <rect x="0" y="0"  width="5"  height="48" rx="2.5" fill="#0A1628"/>
+          <line x1="5" y1="5"   x2="20" y2="0"  stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="20" y1="0"  x2="28" y2="0"  stroke="#0066FF" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="28" cy="0" r="5.5" fill="#0066FF"/>
+          <line x1="5" y1="24"  x2="20" y2="24" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="5" y1="43"  x2="20" y2="24" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="20" y1="24" x2="28" y2="48" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="20" cy="24" r="5" fill="#0066FF"/>
+        </svg>
+        <span class="icon-size-label">32px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg width="20" height="20" viewBox="0 0 32 48" fill="none">
+          <rect x="0" y="0"  width="5"  height="48" rx="2.5" fill="#0A1628"/>
+          <line x1="5" y1="5"   x2="28" y2="0"  stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="28" cy="0" r="5.5" fill="#0066FF"/>
+          <line x1="5" y1="24"  x2="20" y2="24" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <line x1="5" y1="43"  x2="28" y2="48" stroke="#0A1628" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="20" cy="24" r="5" fill="#0066FF"/>
+        </svg>
+        <span class="icon-size-label">20px</span>
+      </div>
+      <div class="icon-size-item">
+        <div style="background:#0A1628;padding:10px;border-radius:8px;">
+          <svg width="28" height="32" viewBox="0 0 32 48" fill="none">
+            <rect x="0" y="0"  width="5"  height="48" rx="2.5" fill="white"/>
+            <line x1="5" y1="5"   x2="20" y2="0"  stroke="white" stroke-width="5" stroke-linecap="round"/>
+            <line x1="20" y1="0"  x2="28" y2="0"  stroke="#0066FF" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="28" cy="0" r="5.5" fill="#0066FF"/>
+            <line x1="5" y1="24"  x2="20" y2="24" stroke="white" stroke-width="5" stroke-linecap="round"/>
+            <line x1="5" y1="43"  x2="20" y2="24" stroke="white" stroke-width="5" stroke-linecap="round"/>
+            <line x1="20" y1="24" x2="28" y2="48" stroke="white" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="20" cy="24" r="5" fill="#0066FF"/>
+          </svg>
+        </div>
+        <span class="icon-size-label">Dark bg</span>
+      </div>
+      <div class="icon-size-item">
+        <div style="background:#0066FF;padding:2px 4px;border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;">
+          <svg width="11" height="16" viewBox="0 0 32 48" fill="none">
+            <rect x="0" y="0"  width="5"  height="48" rx="2.5" fill="white"/>
+            <line x1="5" y1="5"   x2="28" y2="0"  stroke="white" stroke-width="6" stroke-linecap="round"/>
+            <line x1="5" y1="24"  x2="20" y2="24" stroke="white" stroke-width="6" stroke-linecap="round"/>
+            <line x1="5" y1="43"  x2="28" y2="48" stroke="white" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="icon-size-label">Favicon</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <div class="rat-item">
+      <div class="rat-title">Concept</div>
+      <div class="rat-body">The K is reimagined as a network diagram. Vertical stroke is the spine. Diagonals become connection lines. Circles are nodes — the vocabulary of data flow and ecosystem connectivity.</div>
+    </div>
+    <div class="rat-item">
+      <div class="rat-title">Strength</div>
+      <div class="rat-body">The accent dot at the top-right is the signature. It's memorable and unique — no other Bahamian tech company has this kind of mark. Communicates "digital ecosystem" instantly at a subconscious level.</div>
+    </div>
+    <div class="rat-item">
+      <div class="rat-title">Fits when</div>
+      <div class="rat-body">You want the logo to function as a conversation starter. The Node concept is best for KemisDigital pitching to SMEs who need to see that you're a different kind of company — not just another dev shop.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 3 — THE MARK
+     Bold KD monogram in a cropped square container
+     One corner cut = forward motion / precision
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+  <div class="concept-label">
+    <span class="concept-num">Concept 03</span>
+    <span class="concept-name">The Mark</span>
+    <span class="concept-tagline">"Bold. Sovereign. Built to lead."</span>
+  </div>
+
+  <div class="display-row">
+
+    <!-- Light -->
+    <div class="display-cell light">
+      <svg width="224" height="48" viewBox="0 0 224 48" fill="none">
+        <!-- Container: square with top-right corner cut -->
+        <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0A1628"/>
+        <!-- KD inside the mark -->
+        <!-- K -->
+        <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+        <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- D -->
+        <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+        <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- Accent cut-corner fill -->
+        <path d="M36 0 L44 0 L44 8 Z" fill="#0066FF"/>
+        <!-- Wordmark -->
+        <text x="56" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#0A1628" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label">On Light</span>
+    </div>
+
+    <!-- Muted -->
+    <div class="display-cell muted">
+      <svg width="224" height="48" viewBox="0 0 224 48" fill="none">
+        <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0A1628"/>
+        <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+        <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+        <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M36 0 L44 0 L44 8 Z" fill="#0066FF"/>
+        <text x="56" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#0A1628" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label">On Muted</span>
+    </div>
+
+    <!-- Dark -->
+    <div class="display-cell dark">
+      <svg width="224" height="48" viewBox="0 0 224 48" fill="none">
+        <!-- On dark: container becomes accent, KD stays white -->
+        <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0066FF"/>
+        <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+        <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+        <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- Corner cut = white on dark for contrast -->
+        <path d="M36 0 L44 0 L44 8 Z" fill="rgba(255,255,255,0.25)"/>
+        <text x="56" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span class="cell-label inv">On Dark</span>
+    </div>
+  </div>
+
+  <!-- Icon sizes -->
+  <div class="icon-row">
+    <span class="icon-row-label">Mark only</span>
+    <div class="icon-sizes">
+      <div class="icon-size-item">
+        <svg width="48" height="48" viewBox="0 0 44 48" fill="none">
+          <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0A1628"/>
+          <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+          <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+          <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M36 0 L44 0 L44 8 Z" fill="#0066FF"/>
+        </svg>
+        <span class="icon-size-label">48px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg width="32" height="32" viewBox="0 0 44 48" fill="none">
+          <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0A1628"/>
+          <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+          <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+          <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M36 0 L44 0 L44 8 Z" fill="#0066FF"/>
+        </svg>
+        <span class="icon-size-label">32px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg width="20" height="20" viewBox="0 0 44 48" fill="none">
+          <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0A1628"/>
+          <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+          <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="4" stroke-linecap="round"/>
+          <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="4" stroke-linecap="round"/>
+          <rect x="22" y="12" width="4" height="24" rx="1.5" fill="white"/>
+          <path d="M36 0 L44 0 L44 8 Z" fill="#0066FF"/>
+        </svg>
+        <span class="icon-size-label">20px</span>
+      </div>
+      <div class="icon-size-item">
+        <!-- Dark bg: use accent container -->
+        <div style="background:#0A1628;padding:8px;border-radius:8px;">
+          <svg width="32" height="32" viewBox="0 0 44 48" fill="none">
+            <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0066FF"/>
+            <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+            <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+            <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+            <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="icon-size-label">Dark bg</span>
+      </div>
+      <div class="icon-size-item">
+        <div style="background:#0A1628;border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 44 48" fill="none">
+            <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0066FF"/>
+            <rect x="8" y="12" width="5" height="24" rx="1.5" fill="white"/>
+            <line x1="13" y1="12" x2="22" y2="24" stroke="white" stroke-width="5" stroke-linecap="round"/>
+            <line x1="13" y1="36" x2="22" y2="24" stroke="white" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="icon-size-label">Favicon</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <div class="rat-item">
+      <div class="rat-title">Concept</div>
+      <div class="rat-body">The KD monogram sits inside a square container with a precision-cut corner in accent color. The cut corner signals forward momentum and exactness — the mark of a builder, not a consultant.</div>
+    </div>
+    <div class="rat-item">
+      <div class="rat-title">Strength</div>
+      <div class="rat-body">Most symbol-forward of the three. Works best as an app icon, badge, or social media avatar. The container makes it immediately distinguishable at small sizes. The accent corner inversion on dark backgrounds adds versatility.</div>
+    </div>
+    <div class="rat-item">
+      <div class="rat-title">Fits when</div>
+      <div class="rat-body">KemisDigital plans to ship a product with its own branded app or interface — the mark becomes the app icon. Best choice if you want the brand to stand fully independent of the wordmark.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     COMPARISON STRIP
+     ═══════════════════════════════════════════════════════════ -->
+<div style="max-width:1100px;margin:0 auto 40px;background:white;border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 32px rgba(10,22,40,0.07);">
+  <div style="padding:20px 32px;border-bottom:1px solid var(--border);">
+    <span style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);font-family:var(--mono);">Side-by-Side Comparison</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);background:var(--navy);">
+
+    <!-- C1 dark -->
+    <div style="padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:20px;border-right:1px solid rgba(255,255,255,0.08);">
+      <svg width="180" height="38" viewBox="0 0 220 44" fill="none">
+        <rect x="0"  y="0"  width="36" height="9"  rx="2.5" fill="white"/>
+        <rect x="0"  y="14" width="28" height="9"  rx="2.5" fill="#0066FF"/>
+        <rect x="0"  y="28" width="18" height="9"  rx="2.5" fill="white" opacity="0.3"/>
+        <text x="48" y="31" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:var(--mono);">01 · Platform Stack</span>
+    </div>
+
+    <!-- C2 dark -->
+    <div style="padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:20px;border-right:1px solid rgba(255,255,255,0.08);">
+      <svg width="180" height="38" viewBox="0 0 224 48" fill="none">
+        <rect x="0" y="4" width="5" height="40" rx="2.5" fill="white"/>
+        <line x1="5" y1="8"  x2="20" y2="4"  stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="4" x2="27" y2="4"  stroke="#0066FF" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="27" cy="4" r="5" fill="#0066FF"/>
+        <line x1="5"  y1="24" x2="20" y2="24" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="5"  y1="38" x2="20" y2="24" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="24" x2="27" y2="44" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="20" cy="24" r="4" fill="#0066FF"/>
+        <circle cx="27" cy="44" r="3.5" fill="white" opacity="0.35"/>
+        <text x="44" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:var(--mono);">02 · The Node</span>
+    </div>
+
+    <!-- C3 dark -->
+    <div style="padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:20px;">
+      <svg width="180" height="38" viewBox="0 0 224 48" fill="none">
+        <path d="M0 0 L36 0 L44 8 L44 44 Q44 48 40 48 L4 48 Q0 48 0 44 Z" fill="#0066FF"/>
+        <rect x="8" y="12" width="4" height="24" rx="1.5" fill="white"/>
+        <line x1="12" y1="12" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="12" y1="36" x2="20" y2="24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="22" y="12" width="3.5" height="24" rx="1.5" fill="white"/>
+        <path d="M25.5 12 Q36 12 36 24 Q36 36 25.5 36" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M36 0 L44 0 L44 8 Z" fill="rgba(255,255,255,0.25)"/>
+        <text x="56" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.6">Kemis<tspan fill="#0066FF">Digital</tspan></text>
+      </svg>
+      <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:var(--mono);">03 · The Mark</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── footer note ── -->
+<div style="max-width:1100px;margin:0 auto;padding:0 4px;">
+  <p style="font-size:12px;color:#8896B4;font-family:var(--mono);">KemisDigital Brand Identity · Phase 3 · The Kemis Group of Companies · Nassau, The Bahamas</p>
+</div>
+
+</body>
+</html>
