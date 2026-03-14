@@ -41,8 +41,6 @@ export default function LoginPage() {
     }
   }
 
-  const showDemoAccounts = process.env.NODE_ENV === "development";
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900 p-4">
       <div className="w-full max-w-sm">
@@ -98,41 +96,39 @@ export default function LoginPage() {
             </button>
           </form>
         </div>
-        {showDemoAccounts && (
-          <div className="mt-6 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 p-4">
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-3 uppercase tracking-wider">Demo Accounts</p>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("admin@amtimports.com");
-                  setPassword("admin123");
-                }}
-                className="w-full text-left rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">admin@amtimports.com</p>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400 px-1.5 py-0.5 rounded">Admin</span>
-                </div>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500">Password: admin123</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("customer@test.com");
-                  setPassword("customer123");
-                }}
-                className="w-full text-left rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">customer@test.com</p>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Customer</span>
-                </div>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500">Password: customer123</p>
-              </button>
-            </div>
+        <div className="mt-6 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 p-4">
+          <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-3 uppercase tracking-wider">Demo Accounts</p>
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("admin@amtimports.com");
+                setPassword("admin123");
+              }}
+              className="w-full text-left rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">admin@amtimports.com</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400 px-1.5 py-0.5 rounded">Admin</span>
+              </div>
+              <p className="text-xs text-zinc-400 dark:text-zinc-500">Password: admin123</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("customer@test.com");
+                setPassword("customer123");
+              }}
+              className="w-full text-left rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">customer@test.com</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Customer</span>
+              </div>
+              <p className="text-xs text-zinc-400 dark:text-zinc-500">Password: customer123</p>
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
