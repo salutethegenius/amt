@@ -50,7 +50,7 @@ Fill in the required values:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key (for admin operations) |
 | `CNG_MERCHANT_ID` | Yes | Cash N' Go merchant AUTH_ID |
-| `CNG_API_KEY` | Yes | Cash N' Go API key (server-only) |
+| `CNG_API_KEY` | Yes | Cash N' Go **Headers** API key (`apikey`), raw — not the URL-encoded copy |
 | `CNG_BASE_URL` | No | Defaults to `https://paylanes.sprocket.solutions` |
 | `RESEND_API_KEY` | Yes | Resend API key for email |
 | `EMAIL_FROM` | No | Sender email (defaults to Resend onboarding) |

@@ -29,6 +29,7 @@ export const CNG_AUTH_ENDPOINT =
 
 export function getCngConfig() {
   const merchantId = process.env.CNG_MERCHANT_ID;
+  // Headers key (apikey). If someone pasted the URL-encoded copy, decode once.
   const apiKey = process.env.CNG_API_KEY;
   const raw = (process.env.CNG_BASE_URL || CNG_AUTH_ENDPOINT).replace(/\/$/, "");
   const authEndpoint = raw.includes("/merchant/web-payment/auth")
