@@ -8,10 +8,13 @@ import { PayButton } from "./pay-button";
 
 export default async function PortalInvoiceDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ paid?: string; cancelled?: string; error?: string }>;
 }) {
   const { id } = await params;
+  const query = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -106,16 +109,32 @@ export default async function PortalInvoiceDetailPage({
           </table>
         </div>
 
+        {query.cancelled === "true" && canPay && (
+          <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-amber-50 dark:bg-amber-900/20">
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-400">
+              Payment was cancelled. You can try again when you are ready.
+            </p>
+          </div>
+        )}
+
+        {query.error === "true" && canPay && (
+          <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-red-50 dark:bg-red-900/20">
+            <p className="text-sm font-medium text-red-800 dark:text-red-400">
+              We could not confirm this payment. If you were charged, contact A.M.T Imports.
+            </p>
+          </div>
+        )}
+
         {canPay && (
           <div className="px-6 py-5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
             <PayButton invoiceId={inv.id} />
           </div>
         )}
 
-        {inv.status === "paid" && inv.paid_at && (
+        {(inv.status === "paid" || query.paid === "true") && (
           <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-green-50 dark:bg-green-900/20">
             <p className="text-sm font-medium text-green-800 dark:text-green-400">
-              Paid on {formatDate(inv.paid_at)}
+              {inv.paid_at ? `Paid on ${formatDate(inv.paid_at)}` : "Payment received."}
             </p>
           </div>
         )}

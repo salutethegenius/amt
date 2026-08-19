@@ -70,6 +70,7 @@ export function InvoiceActions({
       amount_cents: amountCents,
       status: "completed",
       paid_at: new Date().toISOString(),
+      provider: "manual",
     });
 
     if (paymentError) {
