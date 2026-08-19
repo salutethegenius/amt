@@ -7,14 +7,14 @@ An online system for managing courier operations: customer management, order tra
 - **Public Landing Page** - Company info, services, pricing, and contact details
 - **Admin Dashboard** - Manage customers, orders, invoices, and payments
 - **Customer Portal** - View orders, invoices, pay online, and download receipts
-- **Stripe Integration** - Secure online payments via Stripe Checkout
+- **Cash N' Go** - Card payments via Cash N' Go hosted checkout
 - **Email Notifications** - Automated emails for invoices, payments, and order updates
 
 ## Tech Stack
 
 - **Frontend**: Next.js 16 + TypeScript + Tailwind CSS
 - **Database & Auth**: Supabase (Postgres + Auth + Row Level Security)
-- **Payments**: Stripe Checkout
+- **Payments**: Cash N' Go (Paylanes) card checkout
 - **Email**: Resend
 - **Backend**: FastAPI (optional, for extended features)
 - **Deployment**: Docker
@@ -24,7 +24,7 @@ An online system for managing courier operations: customer management, order tra
 - Node 20+
 - Python 3.11+ (for API service)
 - Supabase project
-- Stripe account
+- Cash N' Go merchant account (merchant ID + API key)
 - Resend account
 
 ## Quick Start
@@ -49,13 +49,13 @@ Fill in the required values:
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key (for admin operations) |
-| `STRIPE_SECRET_KEY` | Yes | Stripe secret key |
-| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Yes | Stripe publishable key |
+| `CNG_MERCHANT_ID` | Yes | Cash N' Go merchant AUTH_ID |
+| `CNG_API_KEY` | Yes | Cash N' Go API key (server-only) |
+| `CNG_BASE_URL` | No | Defaults to `https://paylanes.sprocket.solutions` |
 | `RESEND_API_KEY` | Yes | Resend API key for email |
 | `EMAIL_FROM` | No | Sender email (defaults to Resend onboarding) |
 | `ADMIN_EMAIL` | No | Admin notification email |
-| `NEXT_PUBLIC_SITE_URL` | No | Public URL (defaults to localhost:3000) |
+| `NEXT_PUBLIC_SITE_URL` | Yes (for live payments) | Public URL used for email links and Cash N' Go return redirects |
 
 ### 3. Run locally
 
@@ -66,13 +66,7 @@ npm run dev
 
 Visit http://localhost:3000
 
-### 4. Set up Stripe webhook (for local dev)
-
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
-
-### 5. Create your first admin user
+### 4. Create your first admin user
 
 1. Sign up at `/login`
 2. In Supabase SQL Editor, update your profile role:
@@ -98,8 +92,8 @@ apps/web/src/
       invoices/                     # View and pay invoices
       orders/                       # Track order status
     api/
-      stripe/checkout/              # Stripe Checkout session creation
-      stripe/webhook/               # Stripe payment webhook
+      cng/checkout/                 # Cash N' Go hosted checkout URL
+      cng/return/                   # Cash N' Go success/cancel + verify
       notify/invoice-sent/          # Email notification: invoice sent
       notify/order-status/          # Email notification: order status
   components/ui/                    # Shared UI components
@@ -118,6 +112,17 @@ apps/web/src/
 - **invoices** - Customer invoices with line items
 - **invoice_items** - Individual line items per invoice
 - **invoice_payments** - Payment records
+
+## Client payment test
+
+1. Admin sends an invoice linked to an order (existing test invoice: `INV-MMQDWHBX`).
+2. Customer logs in → **My Orders** → open the order → **Pay Now**.
+3. Complete the Cash N' Go card page. The app verifies the payment with the transaction API before marking the invoice paid.
+4. Admin checks **Payments** for a Cash N' Go row.
+
+For a remote client, `NEXT_PUBLIC_SITE_URL` must be the public HTTPS origin of the deployed app. Localhost only works if the payer is on that same machine.
+
+Cash N' Go amounts must be greater than $1.00. Production charges are live card payments.
 
 ## Order Status Workflow
 

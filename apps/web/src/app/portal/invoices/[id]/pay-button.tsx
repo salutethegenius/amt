@@ -8,7 +8,7 @@ export function PayButton({ invoiceId }: { invoiceId: string }) {
   async function handlePay() {
     setLoading(true);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      const res = await fetch("/api/cng/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ invoiceId }),
@@ -32,7 +32,7 @@ export function PayButton({ invoiceId }: { invoiceId: string }) {
       disabled={loading}
       className="w-full sm:w-auto rounded-lg bg-blue-600 text-white px-8 py-3 text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
     >
-      {loading ? "Redirecting to payment..." : "Pay Now"}
+      {loading ? "Redirecting to Cash N' Go..." : "Pay Now"}
     </button>
   );
 }

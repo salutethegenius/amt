@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import type { Customer } from "@/lib/types";
+import type { Customer, Order } from "@/lib/types";
 
 interface LineItem {
   description: string;
@@ -14,7 +14,9 @@ interface LineItem {
 
 export default function NewInvoicePage() {
   const [customers, setCustomers] = useState<Pick<Customer, "id" | "full_name">[]>([]);
+  const [orders, setOrders] = useState<Pick<Order, "id" | "description" | "created_at">[]>([]);
   const [customerId, setCustomerId] = useState("");
+  const [orderId, setOrderId] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [items, setItems] = useState<LineItem[]>([
     { description: "", quantity: 1, unit_price_cents: 0 },
@@ -30,6 +32,20 @@ export default function NewInvoicePage() {
       .order("full_name")
       .then(({ data }) => setCustomers(data ?? []));
   }, [supabase]);
+
+  useEffect(() => {
+    setOrderId("");
+    if (!customerId) {
+      setOrders([]);
+      return;
+    }
+    supabase
+      .from("orders")
+      .select("id, description, created_at")
+      .eq("customer_id", customerId)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setOrders(data ?? []));
+  }, [customerId, supabase]);
 
   function addItem() {
     setItems([...items, { description: "", quantity: 1, unit_price_cents: 0 }]);
@@ -47,7 +63,7 @@ export default function NewInvoicePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!customerId || items.length === 0) return;
+    if (!customerId || !orderId || items.length === 0) return;
     setLoading(true);
 
     const invoiceNumber = `INV-${Date.now().toString(36).toUpperCase()}`;
@@ -57,6 +73,7 @@ export default function NewInvoicePage() {
       .insert({
         invoice_number: invoiceNumber,
         customer_id: customerId,
+        order_id: orderId,
         amount_cents: total,
         due_date: dueDate || null,
         status: "draft",
@@ -114,6 +131,40 @@ export default function NewInvoicePage() {
                 <option key={c.id} value={c.id}>{c.full_name}</option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="order_id" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+              Order *
+            </label>
+            <select
+              id="order_id"
+              value={orderId}
+              onChange={(e) => setOrderId(e.target.value)}
+              required
+              disabled={!customerId}
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              <option value="">
+                {!customerId
+                  ? "Select a customer first..."
+                  : orders.length === 0
+                    ? "No orders for this customer"
+                    : "Select order..."}
+              </option>
+              {orders.map((order) => (
+                <option key={order.id} value={order.id}>
+                  {order.description || "Delivery Order"} — {new Date(order.created_at).toLocaleDateString()}
+                </option>
+              ))}
+            </select>
+            {customerId && orders.length === 0 && (
+              <p className="mt-1 text-xs text-zinc-500">
+                Create an order for this customer before invoicing.{" "}
+                <Link href="/dashboard/orders/new" className="text-blue-600 hover:text-blue-700">
+                  New order
+                </Link>
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="due_date" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
@@ -203,7 +254,7 @@ export default function NewInvoicePage() {
         <div className="flex gap-3">
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !orderId}
             className="rounded-lg bg-blue-600 text-white px-6 py-2.5 text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
             {loading ? "Creating..." : "Create Invoice"}

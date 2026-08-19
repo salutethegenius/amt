@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatCents, formatDate } from "@/lib/types";
+import { formatCents, formatDate, paymentMethodLabel } from "@/lib/types";
 import type { InvoicePayment, Invoice } from "@/lib/types";
 
 export default async function PaymentsPage() {
@@ -64,7 +64,7 @@ export default async function PaymentsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-zinc-500 hidden md:table-cell">
-                      {payment.stripe_payment_intent_id ? "Stripe" : "Manual"}
+                      {paymentMethodLabel(payment)}
                     </td>
                     <td className="px-6 py-4 text-zinc-500 hidden lg:table-cell">
                       {payment.paid_at ? formatDate(payment.paid_at) : formatDate(payment.created_at)}

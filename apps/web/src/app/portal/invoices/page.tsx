@@ -5,7 +5,12 @@ import { formatCents, formatDate } from "@/lib/types";
 import type { Invoice } from "@/lib/types";
 import Link from "next/link";
 
-export default async function PortalInvoicesPage() {
+export default async function PortalInvoicesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cancelled?: string; error?: string }>;
+}) {
+  const query = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -40,6 +45,17 @@ export default async function PortalInvoicesPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-8">My Invoices</h1>
+
+      {query.cancelled === "true" && (
+        <p className="mb-6 rounded-lg bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
+          Payment was cancelled. Open an unpaid invoice to try again.
+        </p>
+      )}
+      {query.error === "true" && (
+        <p className="mb-6 rounded-lg bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-800 dark:text-red-400">
+          We could not confirm this payment. If you were charged, contact A.M.T Imports.
+        </p>
+      )}
 
       {list.length === 0 ? (
         <EmptyState

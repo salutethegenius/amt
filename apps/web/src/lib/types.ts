@@ -59,6 +59,8 @@ export interface Invoice {
   due_date: string | null;
   paid_at: string | null;
   stripe_checkout_session_id: string | null;
+  cng_passphrase: string | null;
+  cng_payment_id: string | null;
   created_at: string;
   updated_at: string;
   customer?: Customer;
@@ -75,16 +77,32 @@ export interface InvoiceItem {
 }
 
 export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
+export type PaymentProvider = "cng" | "manual" | "stripe";
 
 export interface InvoicePayment {
   id: string;
   invoice_id: string;
   amount_cents: number;
   stripe_payment_intent_id: string | null;
+  provider: PaymentProvider | null;
+  cng_payment_id: string | null;
+  payment_platform: string | null;
   status: PaymentStatus;
   paid_at: string | null;
   created_at: string;
   invoice?: Invoice;
+}
+
+export function paymentMethodLabel(payment: InvoicePayment): string {
+  if (payment.provider === "cng" || payment.cng_payment_id) {
+    return payment.payment_platform
+      ? `Cash N' Go (${payment.payment_platform})`
+      : "Cash N' Go";
+  }
+  if (payment.provider === "stripe" || payment.stripe_payment_intent_id) {
+    return "Stripe";
+  }
+  return "Manual";
 }
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
