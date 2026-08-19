@@ -58,15 +58,12 @@ export function publicOriginFromRequest(request: Request): string {
   );
 }
 
-function encodeCngQueryValue(key: string, value: string): string {
-  const encoded = encodeURIComponent(value);
-  if (key === "API_KEY") {
-    return encoded.replace(/%2B/gi, "+").replace(/%2F/gi, "/").replace(/%3D/gi, "=");
-  }
-  if (key === "URL_SUCCESS" || key === "URL_CANCEL") {
-    return encoded.replace(/%3A/gi, ":").replace(/%2F/gi, "/");
-  }
-  return encoded;
+function withVercelProtectionBypass(pageUrl: string): string {
+  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (!secret) return pageUrl;
+  const url = new URL(pageUrl);
+  url.searchParams.set("x-vercel-protection-bypass", secret);
+  return url.toString();
 }
 
 export function buildPaymentPageUrl(input: {
@@ -76,17 +73,21 @@ export function buildPaymentPageUrl(input: {
 }): string {
   const { merchantId, apiKey, baseUrl } = getCngConfig();
   const origin = input.siteUrl.replace(/\/$/, "");
-  const pairs: [string, string][] = [
-    ["API_KEY", apiKey],
-    ["AUTH_ID", merchantId],
-    ["AMOUNT", formatCngAmount(input.amountCents)],
-    ["URL_SUCCESS", `${origin}/cng/return/success`],
-    ["URL_CANCEL", `${origin}/cng/return/cancel`],
-    ["ORDER_NUMBER", input.orderNumber],
-    ["PAYMENT_OPTIONS", "card"],
-  ];
-  const query = pairs.map(([key, value]) => `${key}=${encodeCngQueryValue(key, value)}`).join("&");
-  return `${baseUrl}/merchant/web-payment/auth?${query}`;
+  const url = new URL(`${baseUrl}/merchant/web-payment/auth`);
+  url.searchParams.set("API_KEY", apiKey);
+  url.searchParams.set("AUTH_ID", merchantId);
+  url.searchParams.set("AMOUNT", formatCngAmount(input.amountCents));
+  url.searchParams.set(
+    "URL_SUCCESS",
+    withVercelProtectionBypass(`${origin}/cng/return/success`)
+  );
+  url.searchParams.set(
+    "URL_CANCEL",
+    withVercelProtectionBypass(`${origin}/cng/return/cancel`)
+  );
+  url.searchParams.set("ORDER_NUMBER", input.orderNumber);
+  url.searchParams.set("PAYMENT_OPTIONS", "card");
+  return url.toString();
 }
 
 export async function fetchTransactionInfo(lookup: {
