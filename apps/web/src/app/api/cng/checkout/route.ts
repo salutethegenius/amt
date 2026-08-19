@@ -80,13 +80,24 @@ export async function POST(request: Request) {
       orderNumber,
       siteUrl: origin,
     });
+    const parsed = new URL(url);
 
     console.info("CNG checkout started", {
       invoice: invoice.invoice_number,
       origin,
+      auth: `${parsed.origin}${parsed.pathname}`,
+      success: parsed.searchParams.get("URL_SUCCESS"),
     });
 
-    return NextResponse.json({ url });
+    return NextResponse.json({
+      url,
+      debug: {
+        auth: `${parsed.origin}${parsed.pathname}`,
+        origin,
+        success: parsed.searchParams.get("URL_SUCCESS"),
+        cancel: parsed.searchParams.get("URL_CANCEL"),
+      },
+    });
   } catch (error) {
     console.error("CNG checkout error:", error);
     const message =

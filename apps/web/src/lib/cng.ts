@@ -24,13 +24,18 @@ export function isTransactionProcessed(tx: CngTransaction): boolean {
   return tx.processed === 1 || tx.processed === true;
 }
 
+export const CNG_AUTH_ENDPOINT =
+  "https://paylanes.sprocket.solutions/merchant/web-payment/auth";
+
 export function getCngConfig() {
   const merchantId = process.env.CNG_MERCHANT_ID;
   const apiKey = process.env.CNG_API_KEY;
-  const baseUrl = (process.env.CNG_BASE_URL || "https://paylanes.sprocket.solutions").replace(
-    /\/$/,
-    ""
-  );
+  const raw = (process.env.CNG_BASE_URL || CNG_AUTH_ENDPOINT).replace(/\/$/, "");
+  const authEndpoint = raw.includes("/merchant/web-payment/auth")
+    ? raw
+    : `${raw}/merchant/web-payment/auth`;
+  const baseUrl = authEndpoint.replace(/\/merchant\/web-payment\/auth\/?$/, "") ||
+    "https://paylanes.sprocket.solutions";
 
   if (!merchantId || !apiKey) {
     throw new Error("Missing CNG_MERCHANT_ID or CNG_API_KEY");
@@ -45,7 +50,7 @@ export function getCngConfig() {
     }
   }
 
-  return { merchantId, apiKey: decodedKey, baseUrl };
+  return { merchantId, apiKey: decodedKey, baseUrl, authEndpoint };
 }
 
 /** Public HTTPS origin Paylanes can reach after signature. Never localhost. */
@@ -83,9 +88,9 @@ export function buildPaymentPageUrl(input: {
   orderNumber: string;
   siteUrl: string;
 }): string {
-  const { merchantId, apiKey, baseUrl } = getCngConfig();
+  const { merchantId, apiKey, authEndpoint } = getCngConfig();
   const origin = input.siteUrl.replace(/\/$/, "");
-  const url = new URL(`${baseUrl}/merchant/web-payment/auth`);
+  const url = new URL(authEndpoint);
   url.searchParams.set("API_KEY", apiKey);
   url.searchParams.set("AUTH_ID", merchantId);
   url.searchParams.set("AMOUNT", formatCngAmount(input.amountCents));

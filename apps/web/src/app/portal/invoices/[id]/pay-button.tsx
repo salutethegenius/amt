@@ -15,6 +15,7 @@ export function PayButton({ invoiceId }: { invoiceId: string }) {
       });
       const data = await res.json();
       if (data.url) {
+        console.info("CNG checkout", data.debug);
         window.location.href = data.url;
       } else {
         alert(data.error || "Failed to create checkout session");

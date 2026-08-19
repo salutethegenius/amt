@@ -17,6 +17,9 @@ export function POST() {
 export function HEAD() {
   return new Response(null, {
     status: 200,
-    headers: { "Cache-Control": "no-store" },
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
   });
 }
