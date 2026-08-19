@@ -3,6 +3,7 @@ import { sendPaymentConfirmation, sendPaymentReceived } from "@/lib/email/send";
 import {
   cngAmountToCents,
   fetchTransactionInfo,
+  invoiceNumberFromCngOrderNumber,
   isTransactionProcessed,
 } from "@/lib/cng";
 
@@ -22,11 +23,14 @@ export async function settleCngReturn(input: {
   const paymentId = input.paymentId;
 
   const admin = createAdminClient();
-  const { data: invoice } = orderNumber
+  const invoiceNumber = orderNumber
+    ? invoiceNumberFromCngOrderNumber(orderNumber)
+    : null;
+  const { data: invoice } = invoiceNumber
     ? await admin
         .from("invoices")
         .select("*, customer:customers(email, full_name)")
-        .eq("invoice_number", orderNumber)
+        .eq("invoice_number", invoiceNumber)
         .single()
     : { data: null };
 
@@ -60,13 +64,12 @@ export async function settleCngReturn(input: {
     return { outcome: "error", invoiceId: invoice.id, invoiceNumber: invoice.invoice_number };
   }
 
-  if (tx.webOrderNumber && tx.webOrderNumber !== invoice.invoice_number) {
+  if (
+    tx.webOrderNumber &&
+    tx.webOrderNumber !== orderNumber &&
+    invoiceNumberFromCngOrderNumber(tx.webOrderNumber) !== invoice.invoice_number
+  ) {
     console.error("CNG return: order number mismatch");
-    return { outcome: "error", invoiceId: invoice.id, invoiceNumber: invoice.invoice_number };
-  }
-
-  if (invoice.cng_passphrase && tx.webPassphrase && tx.webPassphrase !== invoice.cng_passphrase) {
-    console.error("CNG return: passphrase mismatch");
     return { outcome: "error", invoiceId: invoice.id, invoiceNumber: invoice.invoice_number };
   }
 

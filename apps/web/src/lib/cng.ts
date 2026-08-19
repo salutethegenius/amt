@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 
 export const CNG_MIN_AMOUNT_CENTS = 101;
 
@@ -40,11 +41,6 @@ export function getCngConfig() {
 
 /** Public HTTPS origin Paylanes can reach after signature. Never localhost. */
 export function publicOriginFromRequest(request: Request): string {
-  const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (envUrl && /^https:\/\//i.test(envUrl) && !/localhost|127\.0\.0\.1/i.test(envUrl)) {
-    return envUrl;
-  }
-
   const host = (request.headers.get("x-forwarded-host") || request.headers.get("host") || "")
     .split(",")[0]
     .trim();
@@ -53,17 +49,24 @@ export function publicOriginFromRequest(request: Request): string {
     return `https://${host}`;
   }
 
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (envUrl && /^https:\/\//i.test(envUrl) && !/localhost|127\.0\.0\.1/i.test(envUrl)) {
+    return envUrl;
+  }
+
   throw new Error(
-    "Cash N' Go needs a public HTTPS return URL. Set NEXT_PUBLIC_SITE_URL to the Vercel preview URL (https://....vercel.app)."
+    "Cash N' Go needs a public HTTPS return URL. Open Pay Now from the live HTTPS site, not localhost."
   );
 }
 
-function withVercelProtectionBypass(pageUrl: string): string {
-  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
-  if (!secret) return pageUrl;
-  const url = new URL(pageUrl);
-  url.searchParams.set("x-vercel-protection-bypass", secret);
-  return url.toString();
+/** Unique per Pay click, like Calabash. Invoice number is the prefix before `__`. */
+export function makeCngOrderNumber(invoiceNumber: string): string {
+  return `${invoiceNumber}__${Date.now()}__${randomBytes(4).toString("hex")}`;
+}
+
+export function invoiceNumberFromCngOrderNumber(orderNumber: string): string {
+  const idx = orderNumber.indexOf("__");
+  return idx === -1 ? orderNumber : orderNumber.slice(0, idx);
 }
 
 export function buildPaymentPageUrl(input: {
@@ -77,14 +80,8 @@ export function buildPaymentPageUrl(input: {
   url.searchParams.set("API_KEY", apiKey);
   url.searchParams.set("AUTH_ID", merchantId);
   url.searchParams.set("AMOUNT", formatCngAmount(input.amountCents));
-  url.searchParams.set(
-    "URL_SUCCESS",
-    withVercelProtectionBypass(`${origin}/cng/return/success`)
-  );
-  url.searchParams.set(
-    "URL_CANCEL",
-    withVercelProtectionBypass(`${origin}/cng/return/cancel`)
-  );
+  url.searchParams.set("URL_SUCCESS", `${origin}/cng/return/success`);
+  url.searchParams.set("URL_CANCEL", `${origin}/cng/return/cancel`);
   url.searchParams.set("ORDER_NUMBER", input.orderNumber);
   url.searchParams.set("PAYMENT_OPTIONS", "card");
   return url.toString();

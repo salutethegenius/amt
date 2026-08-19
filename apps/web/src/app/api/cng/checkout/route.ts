@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   buildPaymentPageUrl,
   CNG_MIN_AMOUNT_CENTS,
+  makeCngOrderNumber,
   publicOriginFromRequest,
 } from "@/lib/cng";
 import { NextResponse } from "next/server";
@@ -59,9 +60,10 @@ export async function POST(request: Request) {
     }
 
     const origin = publicOriginFromRequest(request);
+    const orderNumber = makeCngOrderNumber(invoice.invoice_number);
     const url = buildPaymentPageUrl({
       amountCents: invoice.amount_cents,
-      orderNumber: invoice.invoice_number,
+      orderNumber,
       siteUrl: origin,
     });
 
