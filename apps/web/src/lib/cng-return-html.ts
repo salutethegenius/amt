@@ -1,7 +1,4 @@
-function htmlPage(title: string, heading: string, body: string, settle: boolean): string {
-  const script = settle
-    ? `<script>try{fetch("/api/cng/settle"+location.search,{credentials:"omit"})}catch(e){}</script>`
-    : "";
+function htmlPage(title: string, heading: string, body: string): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title>
@@ -12,22 +9,19 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;bac
 .kicker{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#71717a}
 h1{margin-top:12px;font-size:24px;color:#18181b}
 p{margin-top:12px;font-size:14px;line-height:1.5;color:#52525b}
-a{display:inline-block;margin-top:24px;font-size:14px;color:#2563eb;text-decoration:none}
 </style></head>
 <body><div class="card">
 <p class="kicker">A.M.T Imports</p>
 <h1>${heading}</h1>
 <p>${body}</p>
-<a href="/portal/invoices">Back to invoices</a>
-</div>${script}</body></html>`;
+</div></body></html>`;
 }
 
 export function cngSuccessHtml(): string {
   return htmlPage(
     "Payment received",
     "Payment received",
-    "We are confirming your payment. You can close this window.",
-    true
+    "You can close this window and return to your invoice."
   );
 }
 
@@ -35,8 +29,7 @@ export function cngCancelHtml(): string {
   return htmlPage(
     "Payment cancelled",
     "Payment cancelled",
-    "No charge was made. You can close this window or try again from your invoice.",
-    false
+    "No charge was made. You can close this window or try again from your invoice."
   );
 }
 

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   buildPaymentPageUrl,
   CNG_MIN_AMOUNT_CENTS,
@@ -61,6 +62,19 @@ export async function POST(request: Request) {
 
     const origin = publicOriginFromRequest(request);
     const orderNumber = makeCngOrderNumber(invoice.invoice_number);
+
+    try {
+      const { error } = await createAdminClient()
+        .from("invoices")
+        .update({ cng_passphrase: orderNumber })
+        .eq("id", invoice.id);
+      if (error) {
+        console.error("CNG checkout: failed to store order number", error);
+      }
+    } catch (error) {
+      console.error("CNG checkout: failed to store order number", error);
+    }
+
     const url = buildPaymentPageUrl({
       amountCents: invoice.amount_cents,
       orderNumber,

@@ -5,6 +5,7 @@ import { formatCents, formatDate } from "@/lib/types";
 import type { Invoice, InvoiceItem } from "@/lib/types";
 import Link from "next/link";
 import { PayButton } from "./pay-button";
+import { settleCngReturn } from "@/lib/cng-settle";
 
 export default async function PortalInvoiceDetailPage({
   params,
@@ -38,7 +39,22 @@ export default async function PortalInvoiceDetailPage({
 
   if (!invoice) notFound();
 
-  const inv = invoice as Invoice & { invoice_items: InvoiceItem[] };
+  let inv = invoice as Invoice & { invoice_items: InvoiceItem[] };
+
+  if ((inv.status === "sent" || inv.status === "overdue") && inv.cng_passphrase) {
+    const settled = await settleCngReturn({ orderNumber: inv.cng_passphrase });
+    if (settled.outcome === "paid") {
+      const { data: refreshed } = await supabase
+        .from("invoices")
+        .select("*, invoice_items(*)")
+        .eq("id", id)
+        .single();
+      if (refreshed) {
+        inv = refreshed as Invoice & { invoice_items: InvoiceItem[] };
+      }
+    }
+  }
+
   const canPay = inv.status === "sent" || inv.status === "overdue";
 
   return (
