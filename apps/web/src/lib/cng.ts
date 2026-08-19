@@ -1,4 +1,3 @@
-import { randomBytes } from "crypto";
 
 export const CNG_MIN_AMOUNT_CENTS = 101;
 
@@ -20,10 +19,6 @@ export function cngAmountToCents(amount: number | string): number {
   return Math.round(Number(amount) * 100);
 }
 
-export function generatePassphrase(): string {
-  return randomBytes(16).toString("hex");
-}
-
 export function isTransactionProcessed(tx: CngTransaction): boolean {
   return tx.processed === 1 || tx.processed === true;
 }
@@ -35,36 +30,63 @@ export function getCngConfig() {
     /\/$/,
     ""
   );
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
   if (!merchantId || !apiKey) {
     throw new Error("Missing CNG_MERCHANT_ID or CNG_API_KEY");
   }
 
-  return { merchantId, apiKey, baseUrl, siteUrl };
+  return { merchantId, apiKey, baseUrl };
+}
+
+/** Public HTTPS origin Paylanes can reach after signature. Never localhost. */
+export function publicOriginFromRequest(request: Request): string {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (envUrl && /^https:\/\//i.test(envUrl) && !/localhost|127\.0\.0\.1/i.test(envUrl)) {
+    return envUrl;
+  }
+
+  const host = (request.headers.get("x-forwarded-host") || request.headers.get("host") || "")
+    .split(",")[0]
+    .trim();
+
+  if (host && !/^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(host)) {
+    return `https://${host}`;
+  }
+
+  throw new Error(
+    "Cash N' Go needs a public HTTPS return URL. Set NEXT_PUBLIC_SITE_URL to the Vercel preview URL (https://....vercel.app)."
+  );
+}
+
+function encodeCngQueryValue(key: string, value: string): string {
+  const encoded = encodeURIComponent(value);
+  if (key === "API_KEY") {
+    return encoded.replace(/%2B/gi, "+").replace(/%2F/gi, "/").replace(/%3D/gi, "=");
+  }
+  if (key === "URL_SUCCESS" || key === "URL_CANCEL") {
+    return encoded.replace(/%3A/gi, ":").replace(/%2F/gi, "/");
+  }
+  return encoded;
 }
 
 export function buildPaymentPageUrl(input: {
   amountCents: number;
   orderNumber: string;
-  passphrase: string;
+  siteUrl: string;
 }): string {
-  const { merchantId, apiKey, baseUrl, siteUrl } = getCngConfig();
-  const successUrl = `${siteUrl}/cng/return/success`;
-  const cancelUrl = `${siteUrl}/cng/return/cancel`;
-
-  const urlParams = new URLSearchParams();
-  urlParams.set("AUTH_ID", merchantId);
-  urlParams.set("AMOUNT", formatCngAmount(input.amountCents));
-  urlParams.set("URL_SUCCESS", successUrl);
-  urlParams.set("URL_CANCEL", cancelUrl);
-  urlParams.set("ORDER_NUMBER", input.orderNumber);
-  urlParams.set("PASSPHRASE", input.passphrase);
-  urlParams.set("PAYMENT_OPTIONS", "card");
-
-  // Calabash / KemisPay: hosted checkout GET must include API_KEY in the URL.
-  // encodeURIComponent once — do not put an already-encoded key in env.
-  return `${baseUrl}/merchant/web-payment/auth?API_KEY=${encodeURIComponent(apiKey)}&${urlParams.toString()}`;
+  const { merchantId, apiKey, baseUrl } = getCngConfig();
+  const origin = input.siteUrl.replace(/\/$/, "");
+  const pairs: [string, string][] = [
+    ["API_KEY", apiKey],
+    ["AUTH_ID", merchantId],
+    ["AMOUNT", formatCngAmount(input.amountCents)],
+    ["URL_SUCCESS", `${origin}/cng/return/success`],
+    ["URL_CANCEL", `${origin}/cng/return/cancel`],
+    ["ORDER_NUMBER", input.orderNumber],
+    ["PAYMENT_OPTIONS", "card"],
+  ];
+  const query = pairs.map(([key, value]) => `${key}=${encodeCngQueryValue(key, value)}`).join("&");
+  return `${baseUrl}/merchant/web-payment/auth?${query}`;
 }
 
 export async function fetchTransactionInfo(lookup: {

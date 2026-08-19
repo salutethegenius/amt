@@ -1,9 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import {
   buildPaymentPageUrl,
   CNG_MIN_AMOUNT_CENTS,
-  generatePassphrase,
+  publicOriginFromRequest,
 } from "@/lib/cng";
 import { NextResponse } from "next/server";
 
@@ -59,27 +58,25 @@ export async function POST(request: Request) {
       );
     }
 
-    const passphrase = generatePassphrase();
-    const admin = createAdminClient();
-    const { error: updateError } = await admin
-      .from("invoices")
-      .update({ cng_passphrase: passphrase })
-      .eq("id", invoice.id);
-
-    if (updateError) {
-      console.error("Failed to store CNG passphrase:", updateError);
-      return NextResponse.json({ error: "Failed to start checkout" }, { status: 500 });
-    }
-
+    const origin = publicOriginFromRequest(request);
     const url = buildPaymentPageUrl({
       amountCents: invoice.amount_cents,
       orderNumber: invoice.invoice_number,
-      passphrase,
+      siteUrl: origin,
+    });
+
+    console.info("CNG checkout started", {
+      invoice: invoice.invoice_number,
+      origin,
     });
 
     return NextResponse.json({ url });
   } catch (error) {
     console.error("CNG checkout error:", error);
-    return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
+    const message =
+      error instanceof Error && error.message.includes("public HTTPS")
+        ? error.message
+        : "Failed to create checkout session";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
