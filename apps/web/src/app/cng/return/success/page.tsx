@@ -31,7 +31,7 @@ export default async function CngSuccessPage({
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-zinc-50 px-4">
-      <div className="w-full max-max-md rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
+      <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">A.M.T Imports</p>
         <h1 className={`mt-3 text-2xl font-bold ${paid ? "text-green-700" : "text-zinc-900"}`}>
           {paid ? "Payment received" : "Payment response"}
