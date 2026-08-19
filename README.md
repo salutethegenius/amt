@@ -93,7 +93,9 @@ apps/web/src/
       orders/                       # Track order status
     api/
       cng/checkout/                 # Cash N' Go hosted checkout URL
-      cng/return/                   # Cash N' Go success/cancel + verify
+      cng/return/                   # Legacy CNG callback (redirects to public pages)
+    cng/return/success              # Public success page (always 200 HTML)
+    cng/return/cancel               # Public cancel page (always 200 HTML)
       notify/invoice-sent/          # Email notification: invoice sent
       notify/order-status/          # Email notification: order status
   components/ui/                    # Shared UI components
