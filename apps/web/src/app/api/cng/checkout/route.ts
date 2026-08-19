@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
-  buildPaymentPageUrl,
   CNG_MIN_AMOUNT_CENTS,
   makeCngOrderNumber,
   publicOriginFromRequest,
@@ -75,27 +74,17 @@ export async function POST(request: Request) {
       console.error("CNG checkout: failed to store order number", error);
     }
 
-    const url = buildPaymentPageUrl({
-      amountCents: invoice.amount_cents,
-      orderNumber,
-      siteUrl: origin,
-    });
-    const parsed = new URL(url);
-
     console.info("CNG checkout started", {
       invoice: invoice.invoice_number,
       origin,
-      auth: `${parsed.origin}${parsed.pathname}`,
-      success: parsed.searchParams.get("URL_SUCCESS"),
     });
 
     return NextResponse.json({
-      url,
+      redirectPath: `/api/cng/redirect/${encodeURIComponent(orderNumber)}`,
       debug: {
-        auth: `${parsed.origin}${parsed.pathname}`,
         origin,
-        success: parsed.searchParams.get("URL_SUCCESS"),
-        cancel: parsed.searchParams.get("URL_CANCEL"),
+        success: `${origin}/cng/return/success`,
+        cancel: `${origin}/cng/return/cancel`,
       },
     });
   } catch (error) {

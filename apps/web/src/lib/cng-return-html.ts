@@ -1,4 +1,12 @@
-function htmlPage(title: string, heading: string, body: string): string {
+function htmlPage(title: string, heading: string, body: string, messageType?: string): string {
+  const script = messageType
+    ? `<script>
+try {
+  var msg = { type: ${JSON.stringify(messageType)} };
+  if (window.opener) window.opener.postMessage(msg, window.location.origin);
+} catch (e) {}
+</script>`
+    : "";
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title>
@@ -14,14 +22,15 @@ p{margin-top:12px;font-size:14px;line-height:1.5;color:#52525b}
 <p class="kicker">A.M.T Imports</p>
 <h1>${heading}</h1>
 <p>${body}</p>
-</div></body></html>`;
+</div>${script}</body></html>`;
 }
 
 export function cngSuccessHtml(): string {
   return htmlPage(
     "Payment received",
     "Payment received",
-    "You can close this window and return to your invoice."
+    "You can close this window and return to your invoice.",
+    "cng-payment-success"
   );
 }
 
@@ -29,7 +38,8 @@ export function cngCancelHtml(): string {
   return htmlPage(
     "Payment cancelled",
     "Payment cancelled",
-    "No charge was made. You can close this window or try again from your invoice."
+    "No charge was made. You can close this window or try again from your invoice.",
+    "cng-payment-cancel"
   );
 }
 
