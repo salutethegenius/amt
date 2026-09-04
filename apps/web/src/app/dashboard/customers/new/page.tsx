@@ -1,11 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default function NewCustomerPage() {
   async function createCustomer(formData: FormData) {
     "use server";
-    const supabase = await createClient();
+    const { requireAdmin } = await import("@/lib/auth/require-admin");
+    const { supabase, ok } = await requireAdmin();
+    if (!ok) throw new Error("Admin access required");
 
     const { error } = await supabase.from("customers").insert({
       full_name: formData.get("full_name") as string,
@@ -15,7 +16,10 @@ export default function NewCustomerPage() {
       address: (formData.get("address") as string) || null,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("Failed to create customer:", error);
+      throw new Error("Failed to create customer");
+    }
     redirect("/dashboard/customers");
   }
 

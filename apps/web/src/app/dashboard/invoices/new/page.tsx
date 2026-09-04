@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Customer, Order } from "@/lib/types";
+import { createInvoiceAction } from "./actions";
 
 interface LineItem {
   description: string;
@@ -23,29 +24,32 @@ export default function NewInvoicePage() {
   ]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
+    const supabase = createClient();
     supabase
       .from("customers")
       .select("id, full_name")
       .order("full_name")
       .then(({ data }) => setCustomers(data ?? []));
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
-    setOrderId("");
-    if (!customerId) {
-      setOrders([]);
-      return;
-    }
+    if (!customerId) return;
+    let cancelled = false;
+    const supabase = createClient();
     supabase
       .from("orders")
       .select("id, description, created_at")
       .eq("customer_id", customerId)
       .order("created_at", { ascending: false })
-      .then(({ data }) => setOrders(data ?? []));
-  }, [customerId, supabase]);
+      .then(({ data }) => {
+        if (!cancelled) setOrders(data ?? []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [customerId]);
 
   function addItem() {
     setItems([...items, { description: "", quantity: 1, unit_price_cents: 0 }]);
@@ -66,42 +70,20 @@ export default function NewInvoicePage() {
     if (!customerId || !orderId || items.length === 0) return;
     setLoading(true);
 
-    const invoiceNumber = `INV-${Date.now().toString(36).toUpperCase()}`;
+    const result = await createInvoiceAction({
+      customerId,
+      orderId,
+      dueDate: dueDate || null,
+      items: items.filter((item) => item.description.trim()),
+    });
 
-    const { data: invoice, error } = await supabase
-      .from("invoices")
-      .insert({
-        invoice_number: invoiceNumber,
-        customer_id: customerId,
-        order_id: orderId,
-        amount_cents: total,
-        due_date: dueDate || null,
-        status: "draft",
-      })
-      .select("id")
-      .single();
-
-    if (error || !invoice) {
+    if (!result.id) {
       setLoading(false);
-      alert(error?.message || "Failed to create invoice");
+      alert(result.error || "Failed to create invoice");
       return;
     }
 
-    const itemInserts = items
-      .filter((item) => item.description.trim())
-      .map((item) => ({
-        invoice_id: invoice.id,
-        description: item.description,
-        quantity: item.quantity,
-        unit_price_cents: item.unit_price_cents,
-      }));
-
-    if (itemInserts.length > 0) {
-      await supabase.from("invoice_items").insert(itemInserts);
-    }
-
-    setLoading(false);
-    router.push(`/dashboard/invoices/${invoice.id}`);
+    router.push(`/dashboard/invoices/${result.id}`);
   }
 
   return (
@@ -122,7 +104,11 @@ export default function NewInvoicePage() {
             <select
               id="customer_id"
               value={customerId}
-              onChange={(e) => setCustomerId(e.target.value)}
+              onChange={(e) => {
+                setCustomerId(e.target.value);
+                setOrderId("");
+                setOrders([]);
+              }}
               required
               className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >

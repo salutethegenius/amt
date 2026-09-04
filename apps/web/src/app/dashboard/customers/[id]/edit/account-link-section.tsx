@@ -80,8 +80,8 @@ export function AccountLinkSection({
           Portal Account
         </h2>
         <p className="text-xs text-zinc-500 mt-0.5">
-          Link this customer to a portal login so they can view their invoices
-          and orders.
+          Link this customer to a portal login. If they do not have an account yet,
+          we send an invite email.
         </p>
       </div>
 
@@ -136,7 +136,7 @@ export function AccountLinkSection({
               disabled={loading}
               className="rounded-lg bg-blue-600 text-white px-4 py-2 text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
-              {loading ? "Linking..." : `Link by customer email (${customerEmail})`}
+              {loading ? "Inviting..." : `Invite / link (${customerEmail})`}
             </button>
           </div>
         )}

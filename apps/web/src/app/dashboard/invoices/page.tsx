@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default async function InvoicesPage() {
   const supabase = await createClient();
-  const { data: invoices } = await supabase
+  const { data: invoices, error } = await supabase
     .from("invoices")
     .select("*, customer:customers(*)")
     .order("created_at", { ascending: false });
@@ -24,7 +24,9 @@ export default async function InvoicesPage() {
         actionHref="/dashboard/invoices/new"
       />
 
-      {list.length === 0 ? (
+      {error ? (
+        <p className="text-sm text-red-700">Could not load invoices. Try again shortly.</p>
+      ) : list.length === 0 ? (
         <EmptyState
           title="No invoices yet"
           description="Create your first invoice for a customer."

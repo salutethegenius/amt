@@ -14,7 +14,9 @@ export default async function NewOrderPage() {
 
   async function createOrder(formData: FormData) {
     "use server";
-    const supabase = await createClient();
+    const { requireAdmin } = await import("@/lib/auth/require-admin");
+    const { supabase, ok } = await requireAdmin();
+    if (!ok) throw new Error("Admin access required");
 
     const { error } = await supabase.from("orders").insert({
       customer_id: formData.get("customer_id") as string,
@@ -23,7 +25,10 @@ export default async function NewOrderPage() {
       delivery_address: (formData.get("delivery_address") as string) || null,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("Failed to create order:", error);
+      throw new Error("Failed to create order");
+    }
     redirect("/dashboard/orders");
   }
 

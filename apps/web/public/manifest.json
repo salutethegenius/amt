@@ -1,11 +1,11 @@
 {
-  "name": "KemisDigital",
-  "short_name": "KemisDigital",
+  "name": "A.M.T Imports",
+  "short_name": "AMT Imports",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0A1628",
-  "theme_color": "#0066FF",
-  "description": "KemisDigital designs and builds software platforms for Bahamian businesses.",
+  "background_color": "#ffffff",
+  "theme_color": "#162B52",
+  "description": "Courier and import services. Track orders, pay invoices, and manage shipments online.",
   "icons": [
     {
       "src": "/icon-192x192.svg",
@@ -19,4 +19,3 @@
     }
   ]
 }
-

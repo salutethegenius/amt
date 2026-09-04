@@ -58,7 +58,6 @@ export interface Invoice {
   status: InvoiceStatus;
   due_date: string | null;
   paid_at: string | null;
-  stripe_checkout_session_id: string | null;
   cng_passphrase: string | null;
   cng_payment_id: string | null;
   created_at: string;
@@ -77,20 +76,30 @@ export interface InvoiceItem {
 }
 
 export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
-export type PaymentProvider = "cng" | "manual" | "stripe";
+export type PaymentProvider = "cng" | "manual";
 
 export interface InvoicePayment {
   id: string;
-  invoice_id: string;
+  invoice_id: string | null;
   amount_cents: number;
-  stripe_payment_intent_id: string | null;
   provider: PaymentProvider | null;
   cng_payment_id: string | null;
   payment_platform: string | null;
+  order_number: string | null;
+  fee_cents: number | null;
+  net_cents: number | null;
+  payer_email: string | null;
+  payer_phone: string | null;
+  payment_method: string | null;
+  card_type: string | null;
+  processed: boolean | null;
+  cng_created_at: string | null;
+  synced_at: string | null;
+  customer_ref: string | null;
   status: PaymentStatus;
   paid_at: string | null;
   created_at: string;
-  invoice?: Invoice;
+  invoice?: Invoice | null;
 }
 
 export function paymentMethodLabel(payment: InvoicePayment): string {
@@ -98,9 +107,6 @@ export function paymentMethodLabel(payment: InvoicePayment): string {
     return payment.payment_platform
       ? `Cash N' Go (${payment.payment_platform})`
       : "Cash N' Go";
-  }
-  if (payment.provider === "stripe" || payment.stripe_payment_intent_id) {
-    return "Stripe";
   }
   return "Manual";
 }

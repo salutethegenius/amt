@@ -1,28 +1,49 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatCents, formatDate, paymentMethodLabel } from "@/lib/types";
+import { SyncTransactionsButton } from "@/components/dashboard/sync-transactions-button";
+import { paymentSortTime } from "@/lib/analytics";
+import { getLastCngSyncAt } from "@/lib/cashango/settings";
+import { formatBusinessDateTime } from "@/lib/time";
+import { formatCents, paymentMethodLabel } from "@/lib/types";
 import type { InvoicePayment, Invoice } from "@/lib/types";
 
 export default async function PaymentsPage() {
   const supabase = await createClient();
-  const { data: payments } = await supabase
+  const { data: payments, error } = await supabase
     .from("invoice_payments")
-    .select("*, invoice:invoices(*, customer:customers(full_name, email))")
-    .order("created_at", { ascending: false });
+    .select("*, invoice:invoices(*, customer:customers(full_name, email))");
 
-  const list = (payments ?? []) as (InvoicePayment & {
-    invoice: Invoice & { customer: { full_name: string; email: string } };
-  })[];
+  let lastSyncedAt: string | null = null;
+  try {
+    lastSyncedAt = await getLastCngSyncAt(createAdminClient());
+  } catch {
+    lastSyncedAt = null;
+  }
+
+  if (error) {
+    return (
+      <div>
+        <PageHeader title="Payments" description="View all payment transactions." />
+        <p className="text-sm text-red-700">Could not load payments. Try again shortly.</p>
+      </div>
+    );
+  }
+
+  const list = ((payments ?? []) as (InvoicePayment & {
+    invoice: Invoice & { customer: { full_name: string; email: string } } | null;
+  })[]).sort((a, b) => paymentSortTime(b) - paymentSortTime(a));
 
   return (
     <div>
       <PageHeader title="Payments" description="View all payment transactions." />
+      <SyncTransactionsButton lastSyncedAt={lastSyncedAt} />
 
       {list.length === 0 ? (
         <EmptyState
           title="No payments yet"
-          description="Payments will appear here when customers pay their invoices."
+          description="Payments will appear here when customers pay their invoices, or after a CNG sync."
         />
       ) : (
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
@@ -42,13 +63,18 @@ export default async function PaymentsPage() {
                 {list.map((payment) => (
                   <tr key={payment.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                     <td className="px-6 py-4 font-medium text-zinc-900 dark:text-white">
-                      {payment.invoice?.invoice_number ?? "—"}
+                      {payment.invoice?.invoice_number ?? (
+                        <span className="text-zinc-500 font-normal">External</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
-                      {payment.invoice?.customer?.full_name ?? "—"}
+                      {payment.invoice?.customer?.full_name ??
+                        payment.payer_email ??
+                        payment.customer_ref ??
+                        "—"}
                     </td>
                     <td className="px-6 py-4 font-medium text-zinc-900 dark:text-white">
-                      {formatCents(payment.amount_cents)}
+                      {formatCents(payment.net_cents ?? payment.amount_cents)}
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -64,10 +90,12 @@ export default async function PaymentsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-zinc-500 hidden md:table-cell">
-                      {paymentMethodLabel(payment)}
+                      {payment.invoice_id ? paymentMethodLabel(payment) : "External / unmatched"}
                     </td>
                     <td className="px-6 py-4 text-zinc-500 hidden lg:table-cell">
-                      {payment.paid_at ? formatDate(payment.paid_at) : formatDate(payment.created_at)}
+                      {formatBusinessDateTime(
+                        payment.cng_created_at || payment.paid_at || payment.created_at
+                      )}
                     </td>
                   </tr>
                 ))}

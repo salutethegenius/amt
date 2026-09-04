@@ -13,6 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://amtimports.com"
+  ),
   title: "A.M.T Imports",
   description:
     "Fast, reliable courier and import services. Track orders, pay invoices, and manage shipments online.",
