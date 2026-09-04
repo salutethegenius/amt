@@ -1,64 +1,117 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin, publicSiteUrl } from "@/lib/auth/require-admin";
+import { sendPortalInvite } from "@/lib/email/send";
 
-async function findUserByEmail(email: string) {
-  const admin = createAdminClient();
-
-  const { data, error } = await admin.auth.admin.listUsers({ perPage: 1000 });
-  if (error || !data?.users) return null;
-
-  return data.users.find(
-    (u) => u.email?.toLowerCase() === email.toLowerCase()
-  ) ?? null;
+function genericError(): { success: false; error: string } {
+  return { success: false, error: "Something went wrong. Try again." };
 }
 
-export async function linkByEmail(
+async function linkCustomer(customerId: string, userId: string, email: string) {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase
+    .from("customers")
+    .update({ user_id: userId, email })
+    .eq("id", customerId);
+  if (error) return genericError();
+  return { success: true as const, linkedEmail: email };
+}
+
+export async function inviteAndLink(
   customerId: string,
   email: string
 ): Promise<{ success: boolean; error?: string; linkedEmail?: string }> {
-  const supabase = await createClient();
+  const adminGate = await requireAdmin();
+  if (!adminGate.ok) {
+    return { success: false, error: "Admin access required" };
+  }
 
-  const user = await findUserByEmail(email);
-  if (!user) {
+  const normalized = email.trim().toLowerCase();
+  if (!normalized) {
+    return { success: false, error: "Email is required" };
+  }
+
+  const admin = createAdminClient();
+  const origin = publicSiteUrl();
+  const redirectTo = `${origin}/auth/callback?next=/portal`;
+
+  const { data: customer } = await adminGate.supabase
+    .from("customers")
+    .select("id, full_name, email")
+    .eq("id", customerId)
+    .single();
+  if (!customer) {
+    return { success: false, error: "Customer not found" };
+  }
+
+  const { data: invited, error: inviteError } = await admin.auth.admin.inviteUserByEmail(
+    normalized,
+    { redirectTo }
+  );
+
+  if (!inviteError && invited.user) {
+    const linked = await linkCustomer(customerId, invited.user.id, normalized);
+    if (!linked.success) return linked;
+    return { success: true, linkedEmail: normalized };
+  }
+
+  const { data: existingLink, error: existingError } = await admin.auth.admin.generateLink({
+    type: "magiclink",
+    email: normalized,
+    options: { redirectTo },
+  });
+
+  const existingUser = existingLink?.user;
+  if (existingError || !existingUser) {
     return {
       success: false,
-      error: `No portal user found with email "${email}". The user must sign up first.`,
+      error: "Could not invite or find that email. Ask the customer to sign up, then try again.",
     };
   }
 
-  const { error: updateError } = await supabase
-    .from("customers")
-    .update({ user_id: user.id })
-    .eq("id", customerId);
+  const linked = await linkCustomer(customerId, existingUser.id, normalized);
+  if (!linked.success) return linked;
 
-  if (updateError) {
-    return { success: false, error: updateError.message };
+  const actionLink = existingLink.properties?.action_link;
+  if (actionLink) {
+    try {
+      await sendPortalInvite({
+        to: normalized,
+        customerName: customer.full_name,
+        inviteUrl: actionLink,
+      });
+    } catch (err) {
+      console.error("Failed to send portal invite email:", err);
+    }
   }
 
-  return { success: true, linkedEmail: user.email ?? email };
+  return { success: true, linkedEmail: normalized };
 }
 
-export async function linkToUser(
-  customerId: string,
-  email: string
-): Promise<{ success: boolean; error?: string; linkedEmail?: string }> {
-  return linkByEmail(customerId, email);
+export async function linkByEmail(customerId: string, email: string) {
+  return inviteAndLink(customerId, email);
+}
+
+export async function linkToUser(customerId: string, email: string) {
+  return inviteAndLink(customerId, email);
 }
 
 export async function unlinkAccount(
   customerId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
+  const adminGate = await requireAdmin();
+  if (!adminGate.ok) {
+    return { success: false, error: "Admin access required" };
+  }
 
-  const { error } = await supabase
+  const { error } = await adminGate.supabase
     .from("customers")
     .update({ user_id: null })
     .eq("id", customerId);
 
   if (error) {
-    return { success: false, error: error.message };
+    return genericError();
   }
 
   return { success: true };

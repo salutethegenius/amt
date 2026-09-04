@@ -8,7 +8,6 @@ import type { InvoiceStatus } from "@/lib/types";
 export function InvoiceActions({
   invoiceId,
   status,
-  customerEmail,
   amountCents,
 }: {
   invoiceId: string;
@@ -19,12 +18,12 @@ export function InvoiceActions({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const supabase = createClient();
 
   async function sendInvoice() {
     setLoading(true);
     setError(null);
 
+    const supabase = createClient();
     const { error: updateError } = await supabase
       .from("invoices")
       .update({ status: "sent" })
@@ -54,6 +53,7 @@ export function InvoiceActions({
     setLoading(true);
     setError(null);
 
+    const supabase = createClient();
     const { error: updateError } = await supabase
       .from("invoices")
       .update({ status: "paid", paid_at: new Date().toISOString() })

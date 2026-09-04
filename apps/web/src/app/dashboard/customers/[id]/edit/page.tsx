@@ -30,7 +30,9 @@ export default async function EditCustomerPage({
 
   async function updateCustomer(formData: FormData) {
     "use server";
-    const supabase = await createClient();
+    const { requireAdmin } = await import("@/lib/auth/require-admin");
+    const { supabase, ok } = await requireAdmin();
+    if (!ok) throw new Error("Admin access required");
 
     const { error } = await supabase
       .from("customers")
@@ -43,7 +45,10 @@ export default async function EditCustomerPage({
       })
       .eq("id", id);
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("Failed to update customer:", error);
+      throw new Error("Failed to update customer");
+    }
     redirect("/dashboard/customers");
   }
 

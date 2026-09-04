@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { sendInvoiceEmail } from "@/lib/email/send";
+import { siteUrl } from "@/lib/site";
 
 export async function POST(request: Request) {
   try {
@@ -39,7 +40,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invoice or customer not found" }, { status: 404 });
     }
 
-    const origin = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const origin = siteUrl();
     const payUrl = `${origin}/portal/invoices/${invoiceId}`;
 
     await sendInvoiceEmail({

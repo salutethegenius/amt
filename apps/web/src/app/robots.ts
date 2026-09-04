@@ -1,15 +1,15 @@
 import type { MetadataRoute } from "next";
-
-const BASE_URL = "https://kemisdigital.com";
+import { siteUrl } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
+  const base = siteUrl();
   return {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/dashboard", "/portal", "/api/"],
     },
-    sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
+    sitemap: `${base}/sitemap.xml`,
+    host: base,
   };
 }
-

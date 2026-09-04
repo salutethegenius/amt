@@ -2,8 +2,9 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { AuthShell, authButtonClass, authInputClass } from "@/components/auth/auth-shell";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,7 +12,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "error" | "ok"; text: string } | null>(null);
   const router = useRouter();
-  const supabase = createClient();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "auth") {
+      setMessage({ type: "error", text: "Sign-in link expired or is invalid. Try again." });
+    }
+  }, []);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -19,6 +26,7 @@ export default function LoginPage() {
     setMessage(null);
 
     try {
+      const supabase = createClient();
       const { error, data } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         setMessage({ type: "error", text: error.message });
@@ -31,10 +39,9 @@ export default function LoginPage() {
         .eq("id", data.user.id)
         .single();
 
-      const dest = profile?.role === "admin" ? "/dashboard" : "/portal";
-      router.push(dest);
+      router.push(profile?.role === "admin" ? "/dashboard" : "/portal");
       router.refresh();
-    } catch (err) {
+    } catch {
       setMessage({ type: "error", text: "An unexpected error occurred" });
     } finally {
       setLoading(false);
@@ -42,103 +49,57 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900 p-4">
-      <div className="w-full max-w-sm">
-        <Link href="/" className="flex items-center justify-center gap-3 mb-8">
-          <svg width="36" height="36" viewBox="0 0 72 72" fill="none">
-            <path d="M36 4L68 36L36 68L4 36Z" stroke="#162B52" strokeWidth="2.2" fill="none" />
-            <rect x="19" y="22" width="8" height="28" fill="#162B52" />
-            <rect x="32" y="18" width="8" height="36" fill="#162B52" />
-            <rect x="45" y="22" width="8" height="28" fill="#162B52" />
-            <line x1="19" y1="50" x2="53" y2="50" stroke="#162B52" strokeWidth="2" />
-          </svg>
-          <span className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
-            AMT <span className="text-blue-600">Imports</span>
-          </span>
-        </Link>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-6 shadow-sm">
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-            Welcome back
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-            Sign in to access your account.
+    <AuthShell title="Welcome back" subtitle="Sign in to access your account.">
+      <form className="space-y-4" onSubmit={handleSignIn}>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={authInputClass}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+          />
+        </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={authInputClass}
+            required
+            autoComplete="current-password"
+          />
+        </div>
+        {message && (
+          <p className={`text-sm ${message.type === "error" ? "text-red-600" : "text-green-600"}`}>
+            {message.text}
           </p>
-          <form className="space-y-4" onSubmit={handleSignIn}>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-3 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-3 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-            {message && (
-              <p className={`text-sm ${message.type === "error" ? "text-red-600" : "text-green-600"}`}>
-                {message.text}
-              </p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-          </form>
-        </div>
-        <div className="mt-6 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 p-4">
-          <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-3 uppercase tracking-wider">Demo Accounts</p>
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("admin@amtimports.com");
-                setPassword("admin123");
-              }}
-              className="w-full text-left rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">admin@amtimports.com</p>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400 px-1.5 py-0.5 rounded">Admin</span>
-              </div>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500">Password: admin123</p>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("customer@test.com");
-                setPassword("customer123");
-              }}
-              className="w-full text-left rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">customer@test.com</p>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Customer</span>
-              </div>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500">Password: customer123</p>
-            </button>
-          </div>
-        </div>
+        )}
+        <button type="submit" disabled={loading} className={authButtonClass}>
+          {loading ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
+      <div className="mt-4 flex flex-col gap-2 text-sm text-zinc-500">
+        <Link href="/forgot-password" className="text-blue-600 hover:text-blue-700 font-medium">
+          Forgot password?
+        </Link>
+        <p>
+          Need an account?{" "}
+          <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+            Sign up
+          </Link>
+        </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }
