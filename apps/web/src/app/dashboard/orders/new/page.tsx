@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { Customer } from "@/lib/types";
+import { ImportableOrderDescription } from "@/components/dashboard/importable-order-description";
 
 export default async function NewOrderPage() {
   const supabase = await createClient();
@@ -70,16 +71,7 @@ export default async function NewOrderPage() {
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-              Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={3}
-              placeholder="Package details, special instructions..."
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            <ImportableOrderDescription />
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6">

@@ -58,6 +58,7 @@ Fill in the required values:
 | `EMAIL_FROM` | Yes | Verified sender, e.g. `A.M.T Imports <billing@your-domain>` — not Resend onboarding |
 | `ADMIN_EMAIL` | Yes | Admin notification inbox |
 | `NEXT_PUBLIC_SITE_URL` | Yes (for live payments) | Public HTTPS origin for email links and Cash N' Go return URLs |
+| `IMPORTABLE_API_KEY` | Yes (duty lookup) | Importable Bearer token for Bahamas tariff search on new orders/invoices |
 
 ### 3. Run locally
 
@@ -154,7 +155,7 @@ Processing -> Ready for Pickup -> Out for Delivery -> Completed
 
 Do this on AMT Supabase (`wggprtoukhqxfkuymtxd`) and Vercel Production only. Do not apply migrations or production CNG keys to Preview, BACO-DB, or Calabash.
 
-1. **Vercel Production env** (not Preview for live CNG keys): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `CNG_MERCHANT_ID`, `CNG_API_KEY`, `CNG_BASE_URL` (prod PayLanes host), `CNG_WEBHOOK_SECRET`, `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `ADMIN_EMAIL`.
+1. **Vercel Production env** (not Preview for live CNG keys): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `CNG_MERCHANT_ID`, `CNG_API_KEY`, `CNG_BASE_URL` (prod PayLanes host), `CNG_WEBHOOK_SECRET`, `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `ADMIN_EMAIL`, `IMPORTABLE_API_KEY`.
 2. **Vercel cron**: `CRON_SECRET` must be set so Vercel sends `Authorization: Bearer <CRON_SECRET>` to `GET /api/cron/cng-sync`.
 3. **PayLanes webhook**: `https://<amt-host>/api/webhooks/cng` (HMAC-SHA256 of the raw body, `CNG_WEBHOOK_SECRET`).
 4. **Auth dashboard**: enable [Leaked password protection](https://supabase.com/dashboard/project/wggprtoukhqxfkuymtxd/auth/protection) (HaveIBeenPwned). Add the production URL to Auth redirect allow-list (`/auth/callback`).
