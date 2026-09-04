@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/cashango/map.test.ts src/lib/cashango/api.test.ts src/lib/time.test.ts"
+    "test": "tsx --test src/lib/cashango/map.test.ts src/lib/cashango/api.test.ts src/lib/time.test.ts src/lib/importable/duty.test.ts"
   },
   "dependencies": {
     "@react-email/components": "^1.0.9",

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Customer, Order } from "@/lib/types";
 import { createInvoiceAction } from "./actions";
+import { ImportableDutyCalculator } from "@/components/dashboard/importable-duty-calculator";
 
 interface LineItem {
   description: string;
@@ -50,6 +51,13 @@ export default function NewInvoicePage() {
       cancelled = true;
     };
   }, [customerId]);
+
+  function addDutyLines(lines: { description: string; quantity: number; unit_price_cents: number }[]) {
+    setItems((prev) => {
+      const kept = prev.filter((item) => item.description.trim());
+      return [...kept, ...lines];
+    });
+  }
 
   function addItem() {
     setItems([...items, { description: "", quantity: 1, unit_price_cents: 0 }]);
@@ -165,6 +173,8 @@ export default function NewInvoicePage() {
             />
           </div>
         </div>
+
+        <ImportableDutyCalculator onAddLines={addDutyLines} />
 
         {/* Line Items */}
         <div>
