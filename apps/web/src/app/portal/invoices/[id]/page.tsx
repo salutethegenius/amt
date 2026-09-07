@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
+import { resolvePortalCustomerId } from "@/lib/auth/resolve-customer";
+import { PortalAccountPending } from "@/app/portal/account-pending";
+import { notFound, redirect } from "next/navigation";
 import { InvoiceStatusBadge } from "@/components/ui/badge";
 import { formatCents, formatDate } from "@/lib/types";
 import type { Invoice, InvoiceItem } from "@/lib/types";
@@ -21,19 +23,20 @@ export default async function PortalInvoiceDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: customerRecord } = await supabase
-    .from("customers")
-    .select("id")
-    .eq("user_id", user?.id ?? "")
-    .single();
+  if (!user) {
+    redirect(`/login?next=${encodeURIComponent(`/portal/invoices/${id}`)}`);
+  }
 
-  if (!customerRecord) notFound();
+  const customerId = await resolvePortalCustomerId(user);
+  if (!customerId) {
+    return <PortalAccountPending title="Invoice" />;
+  }
 
   const { data: invoice } = await supabase
     .from("invoices")
     .select("*, invoice_items(*)")
     .eq("id", id)
-    .eq("customer_id", customerRecord.id)
+    .eq("customer_id", customerId)
     .single();
 
   if (!invoice) notFound();

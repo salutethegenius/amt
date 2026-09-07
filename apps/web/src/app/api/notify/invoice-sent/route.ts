@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { sendInvoiceEmail } from "@/lib/email/send";
+import { inviteCustomerToPortal } from "@/lib/auth/invite-customer";
 import { siteUrl } from "@/lib/site";
 
 export async function POST(request: Request) {
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
 
     const { data: invoice } = await supabase
       .from("invoices")
-      .select("*, customer:customers(email, full_name)")
+      .select("*, customer:customers(email, full_name, user_id)")
       .eq("id", invoiceId)
       .single();
 
@@ -51,6 +52,20 @@ export async function POST(request: Request) {
       currency: invoice.currency,
       payUrl,
     });
+
+    if (!invoice.customer.user_id) {
+      try {
+        await inviteCustomerToPortal({
+          customerId: invoice.customer_id,
+          email: invoice.customer.email,
+          fullName: invoice.customer.full_name,
+          nextPath: `/portal/invoices/${invoiceId}`,
+          origin,
+        });
+      } catch (err) {
+        console.error("Failed to invite customer for invoice:", err);
+      }
+    }
 
     return NextResponse.json({ sent: true });
   } catch (error) {

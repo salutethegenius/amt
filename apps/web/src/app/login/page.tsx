@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { postLoginPath, safeNextPath } from "@/lib/auth/safe-next";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -11,6 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "error" | "ok"; text: string } | null>(null);
+  const [nextPath, setNextPath] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,7 +20,10 @@ export default function LoginPage() {
     if (params.get("error") === "auth") {
       setMessage({ type: "error", text: "Sign-in link expired or is invalid. Try again." });
     }
+    setNextPath(safeNextPath(params.get("next")));
   }, []);
+
+  const signupHref = nextPath ? `/signup?next=${encodeURIComponent(nextPath)}` : "/signup";
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -39,7 +44,7 @@ export default function LoginPage() {
         .eq("id", data.user.id)
         .single();
 
-      router.push(profile?.role === "admin" ? "/dashboard" : "/portal");
+      router.push(postLoginPath(profile?.role, nextPath));
       router.refresh();
     } catch {
       setMessage({ type: "error", text: "An unexpected error occurred" });
@@ -95,7 +100,7 @@ export default function LoginPage() {
         </Link>
         <p>
           Need an account?{" "}
-          <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link href={signupHref} className="text-blue-600 hover:text-blue-700 font-medium">
             Sign up
           </Link>
         </p>
