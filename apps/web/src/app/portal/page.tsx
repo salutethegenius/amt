@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { resolvePortalCustomerId } from "@/lib/auth/resolve-customer";
+import { PortalAccountPending } from "@/app/portal/account-pending";
 import { StatCard } from "@/components/ui/card";
 import { OrderStatusBadge, InvoiceStatusBadge } from "@/components/ui/badge";
 import { formatCents, formatDate } from "@/lib/types";
@@ -12,21 +14,10 @@ export default async function PortalDashboard() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: customerRecord } = await supabase
-    .from("customers")
-    .select("id")
-    .eq("user_id", user?.id ?? "")
-    .single();
-
-  const customerId = customerRecord?.id;
+  const customerId = await resolvePortalCustomerId(user);
 
   if (!customerId) {
-    return (
-      <div className="text-center py-16">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Welcome</h1>
-        <p className="text-zinc-500">Your account is being set up. Please contact support if you need assistance.</p>
-      </div>
-    );
+    return <PortalAccountPending title="Welcome" />;
   }
 
   const [ordersRes, invoicesRes, recentOrdersRes, recentInvoicesRes] = await Promise.all([

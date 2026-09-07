@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { resolvePortalCustomerId } from "@/lib/auth/resolve-customer";
 import { CNG_MIN_AMOUNT_CENTS, makeCngOrderNumber, publicOriginFromRequest } from "@/lib/cng";
 import { NextResponse } from "next/server";
 
@@ -29,13 +30,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: customerRecord } = await supabase
-      .from("customers")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!customerRecord) {
+    const customerId = await resolvePortalCustomerId(user);
+    if (!customerId) {
       return NextResponse.json({ error: "Customer not found" }, { status: 403 });
     }
 
@@ -43,7 +39,7 @@ export async function POST(request: Request) {
       .from("invoices")
       .select("id, invoice_number, amount_cents, status, customer_id")
       .eq("id", invoiceId)
-      .eq("customer_id", customerRecord.id)
+      .eq("customer_id", customerId)
       .single();
 
     if (!invoice) {

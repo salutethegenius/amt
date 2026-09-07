@@ -1,7 +1,8 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { safeNextPath } from "@/lib/auth/safe-next";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AuthShell, authButtonClass, authInputClass } from "@/components/auth/auth-shell";
 
@@ -11,6 +12,14 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "error" | "ok"; text: string } | null>(null);
+  const [nextPath, setNextPath] = useState("/portal");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setNextPath(safeNextPath(params.get("next")) ?? "/portal");
+  }, []);
+
+  const loginHref = nextPath !== "/portal" ? `/login?next=${encodeURIComponent(nextPath)}` : "/login";
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
@@ -24,7 +33,7 @@ export default function SignupPage() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${origin}/auth/callback?next=/portal`,
+        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
       },
     });
 
@@ -36,7 +45,7 @@ export default function SignupPage() {
 
     setMessage({
       type: "ok",
-      text: "Check your email to confirm your account, then sign in. An admin still needs to link your customer record before invoices appear.",
+      text: "Check your email to confirm your account, then sign in. Invoices billed to this email will show up automatically.",
     });
     setLoading(false);
   }
@@ -98,7 +107,7 @@ export default function SignupPage() {
       </form>
       <p className="mt-4 text-sm text-zinc-500">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+        <Link href={loginHref} className="text-blue-600 hover:text-blue-700 font-medium">
           Sign in
         </Link>
       </p>

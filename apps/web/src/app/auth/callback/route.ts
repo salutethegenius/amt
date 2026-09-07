@@ -1,25 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
+import { postLoginPath, safeNextPath } from "@/lib/auth/safe-next";
 import { NextResponse } from "next/server";
-
-function isValidRedirectPath(path: string): boolean {
-  if (!path.startsWith("/")) return false;
-  if (path.startsWith("//")) return false;
-  if (path.includes("://")) return false;
-  return true;
-}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/portal";
-
-  const safeNext = isValidRedirectPath(next) ? next : "/portal";
+  const next = safeNextPath(searchParams.get("next")) ?? "/portal";
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${safeNext}`);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data: profile } = user
+        ? await supabase.from("profiles").select("role").eq("id", user.id).single()
+        : { data: null };
+      const dest = next === "/reset-password" ? next : postLoginPath(profile?.role, next);
+      return NextResponse.redirect(`${origin}${dest}`);
     }
   }
 

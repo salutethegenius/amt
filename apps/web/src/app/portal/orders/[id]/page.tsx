@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { resolvePortalCustomerId } from "@/lib/auth/resolve-customer";
+import { PortalAccountPending } from "@/app/portal/account-pending";
 import { notFound } from "next/navigation";
 import { formatCents, formatDate } from "@/lib/types";
 import type { Invoice, Order, OrderStatus } from "@/lib/types";
@@ -30,19 +32,16 @@ export default async function PortalOrderDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: customerRecord } = await supabase
-    .from("customers")
-    .select("id")
-    .eq("user_id", user?.id ?? "")
-    .single();
-
-  if (!customerRecord) notFound();
+  const customerId = await resolvePortalCustomerId(user);
+  if (!customerId) {
+    return <PortalAccountPending title="Order" />;
+  }
 
   const { data: order } = await supabase
     .from("orders")
     .select("*")
     .eq("id", id)
-    .eq("customer_id", customerRecord.id)
+    .eq("customer_id", customerId)
     .single();
 
   if (!order) notFound();
@@ -54,7 +53,7 @@ export default async function PortalOrderDetailPage({
     .from("invoices")
     .select("*")
     .eq("order_id", o.id)
-    .eq("customer_id", customerRecord.id)
+    .eq("customer_id", customerId)
     .order("created_at", { ascending: false });
 
   const linkedInvoices = (invoices ?? []) as Invoice[];
